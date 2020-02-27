@@ -1,11 +1,17 @@
 import React from 'react';
 import './App.css';
-import Pages from './pages';
-function App(): JSX.Element {
+import RootRouter from './pages';
+import Header from './component/common/Header';
+import Layout from './component/common/Layout';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+function App() {
     return (
-        <div className="App">
-            <Pages />
-        </div>
+        <Layout>
+            <Router>
+                <Header />
+                <RootRouter />
+            </Router>
+        </Layout>
     );
 }
 export default App;
