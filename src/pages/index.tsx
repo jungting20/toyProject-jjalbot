@@ -14,7 +14,7 @@ function Router() {
     return (
         <Switch>
             {/* 나머지가 아닐경우 imglzy,/ */}
-            <Route component={Imglazyloading} />
+            <Route path="/imglzy" component={Imglazyloading} />
             <Route path="/imgord" component={Imgorderedloading} />
             <Route path="/gitsearch" component={Gitsearchpage} />
             <Route path="/divslide" component={Divslidepage} />
