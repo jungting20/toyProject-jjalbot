@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Observable } from 'rxjs';
 
-export function useObservable<U>(Observable: Observable<U>): U {
+export function useObservable<U>(observable: Observable<U>): U {
     const [state, setstate] = useState();
     useEffect(() => {
-        const subject = Observable.subscribe(setstate);
+        const subject = observable.subscribe(setstate);
         return () => {
             subject.unsubscribe();
         };
-    }, [Observable]);
+    }, [observable]);
     return state;
 }

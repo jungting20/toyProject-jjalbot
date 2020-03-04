@@ -1,5 +1,5 @@
 import React, { createRef, useState } from 'react';
-import { fromEvent, merge, of, Observable } from 'rxjs';
+import { fromEvent, merge, of } from 'rxjs';
 import { filter, mergeMap, mapTo, pluck, throttleTime } from 'rxjs/operators';
 import { isnotnull } from '../../lib/util';
 import { useObservable } from '../../lib/customhook';
