@@ -1,14 +1,6 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { createRef, useState } from 'react';
 import { fromEvent, merge, of, Observable } from 'rxjs';
-import {
-    debounceTime,
-    filter,
-    tap,
-    mergeMap,
-    mapTo,
-    pluck,
-    throttleTime,
-} from 'rxjs/operators';
+import { filter, mergeMap, mapTo, pluck, throttleTime } from 'rxjs/operators';
 import { isnotnull } from '../../lib/util';
 import { useObservable } from '../../lib/customhook';
 import LoadingImgComponent, { ImgBlock, LzyimgProps } from './Img';
@@ -18,7 +10,6 @@ const isnotnullCurrentToRectOb = (ref: React.RefObject<HTMLElement>) =>
 
 const event$ = (ref: React.RefObject<HTMLElement>, event: string) =>
     isnotnullCurrentToRectOb(ref).pipe(
-        tap(console.log),
         mergeMap((dom: HTMLElement) =>
             fromEvent(window, event).pipe(throttleTime(300), mapTo(dom))
         )
@@ -32,7 +23,6 @@ const filteringstartloader = (a: HTMLElement) =>
 const Lzyimg = (props: LzyimgProps) => {
     const [loading, setloading] = useState(true); // 이미지 로딩중 loading 태그 보여줄지 상태 유무
     const ImgBlockRef = createRef<HTMLElement>(); //scroll 이벤트 등록을 위한 Block의 돔이 필요
-
     const loadingstater$ = merge(
         isnotnullCurrentToRectOb(ImgBlockRef), //처음 렌더링 시 위치를 알기 위해 wrapping
         event$(ImgBlockRef, 'scroll'), // 스크롤 이벤트 발생시 위치를 알기 위한 wrapping,
@@ -43,12 +33,9 @@ const Lzyimg = (props: LzyimgProps) => {
             mapTo(true) //위치가 loading이 가능한 위치이면
         );
     const startloading = useObservable(loadingstater$);
-
     const onload = (e: any) => {
         setloading(false);
-        console.log('onload', loading);
     };
-
     return !startloading ? (
         <ImgBlock ref={ImgBlockRef} />
     ) : (
