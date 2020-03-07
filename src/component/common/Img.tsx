@@ -32,7 +32,7 @@ const LoadingImgComponent = (props: LzyimgProps) => {
         <ImgBlock>
             <Loading size="10x" isloading={props.isloading} />
             <ImgComponent
-                src="https://storage.googleapis.com/jjalbot-jjals/2016/10/By-isPa8A/20150418_55321ab45cd50.jpg"
+                src={props.src}
                 onLoad={props.onLoad}
                 isloading={props.isloading}
             />

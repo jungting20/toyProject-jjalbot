@@ -1,9 +1,9 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
-import RootRouter from './pages';
 import Header from './component/common/Header';
 import Layout from './component/common/Layout';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import RootRouter from './pages';
 
 function App() {
     return (
