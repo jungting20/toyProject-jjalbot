@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { ofType } from 'redux-observable';
-import { mergeMap, map } from 'rxjs/operators';
+import { switchMap, mergeMap, map } from 'rxjs/operators';
 import { fetchImgList } from '../lib/api/jjalbotapi';
 
 //--declare type
@@ -30,6 +30,8 @@ export interface Metadata {
 //----types----
 const FETCH_JJAL = 'jjal/FETCH_JJAL' as const;
 const SET_JJAL = 'jjal/SET_JJAL' as const;
+const SET_SEARCHTEXT = 'jjal/SET_SEARCHTEXT' as const;
+
 //-------end types-----------------
 
 //--actions--
@@ -41,22 +43,35 @@ export const set_jjal = (jjallist: Jalbottype[]) => ({
     type: SET_JJAL,
     payload: jjallist,
 });
+
+export const set_searchText = (text: string) => ({
+    type: SET_SEARCHTEXT,
+    payload: text,
+});
+
 //--end actions---
 
-type jjal_actions = ReturnType<typeof set_jjal | typeof fetch_jjal>;
-
+//--action type
+type jjal_actions = ReturnType<
+    typeof set_jjal | typeof fetch_jjal | typeof set_searchText
+>;
+//--end action type
 export type JjalBotInitialStateType = {
+    searchText: string;
     imglist: Jalbottype[];
+    isLoading: boolean;
 };
 
 const initialstate: JjalBotInitialStateType = {
+    searchText: '',
     imglist: [],
+    isLoading: false,
 };
 
 export const jjalbotFetchEpic = (action$: Observable<any>) =>
     action$.pipe(
         ofType(FETCH_JJAL),
-        mergeMap(action =>
+        switchMap(action =>
             fetchImgList(action.payload).pipe(
                 map((imglist: Jalbottype[]) => set_jjal(imglist))
             )
@@ -71,7 +86,8 @@ function jjalbotReducer(
             return { ...state };
         case SET_JJAL:
             return { ...state, imglist: action.payload };
-
+        case SET_SEARCHTEXT:
+            return { ...state, searchText: action.payload };
         default:
             return state;
     }

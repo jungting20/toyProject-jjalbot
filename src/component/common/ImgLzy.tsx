@@ -33,6 +33,7 @@ const Lzyimg = (props: LzyimgProps) => {
             mapTo(true) //위치가 loading이 가능한 위치이면
         );
     const startloading = useObservable(loadingstater$);
+
     const onload = (e: any) => {
         setloading(false);
     };

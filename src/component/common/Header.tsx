@@ -10,6 +10,7 @@ const HeaderBlock = styled.div`
     justify-content: center;
     border: 1px solid;
     height: 100px;
+    margin-bottom: 10px;
 `;
 
 const Wrapper = styled.div`
@@ -23,7 +24,7 @@ function Header() {
     return (
         <HeaderBlock>
             <Wrapper>
-                <Button to="/imglzy">이미지 지연로딩</Button>
+                <Button to="/imglzy">짤봇!</Button>
                 <Button to="/imgord">이미지 순차로딩</Button>
                 <Button to="/gitsearch">깃검색페이지</Button>
                 <Button to="/divslide">슬라이드</Button>

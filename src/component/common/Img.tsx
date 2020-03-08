@@ -19,18 +19,22 @@ export const ImgBlock = styled.div`
     border: 1px solid;
     display: inline-flex;
     justify-content: center;
+    max-height: 500px;
+    max-width: 250px;
 `;
 
 export const ImgComponent = styled.img<LzyimgProps>`
     background-color: blue;
     /* visibility: hidden; */
     display: ${(props: LzyimgProps) => (props.isloading ? 'none' : 'block')};
+    max-height: 500px;
+    max-width: 250px;
 `;
 
 const LoadingImgComponent = (props: LzyimgProps) => {
     return (
         <ImgBlock>
-            <Loading size="10x" isloading={props.isloading} />
+            <Loading size="5x" isloading={props.isloading} />
             <ImgComponent
                 src={props.src}
                 onLoad={props.onLoad}
