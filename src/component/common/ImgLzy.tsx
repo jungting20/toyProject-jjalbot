@@ -38,9 +38,15 @@ const Lzyimg = (props: LzyimgProps) => {
         setloading(false);
     };
     return !startloading ? (
-        <ImgBlock ref={ImgBlockRef} />
+        <ImgBlock ref={ImgBlockRef} maxheight="500px" maxwidth="250px" />
     ) : (
-        <LoadingImgComponent {...props} onLoad={onload} isloading={loading} />
+        <LoadingImgComponent
+            {...props}
+            onLoad={onload}
+            isloading={loading}
+            maxwidth="250px"
+            maxheight="500px"
+        />
     );
 };
 

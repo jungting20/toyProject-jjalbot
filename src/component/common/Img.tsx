@@ -9,6 +9,8 @@ export interface LzyimgProps {
     isloading?: boolean;
     onLoad?: any;
     ref?: any;
+    maxheight?: string;
+    maxwidth?: string;
 }
 
 export const ImgBlock = styled.div`
@@ -19,16 +21,18 @@ export const ImgBlock = styled.div`
     border: 1px solid;
     display: inline-flex;
     justify-content: center;
-    max-height: 500px;
-    max-width: 250px;
+    max-height: ${(props: LzyimgProps) =>
+        props.maxheight ? props.maxheight : '500px'};
+    max-width: ${(props: LzyimgProps) =>
+        props.maxwidth ? props.maxwidth : '250px'};
 `;
 
 export const ImgComponent = styled.img<LzyimgProps>`
     background-color: blue;
     /* visibility: hidden; */
     display: ${(props: LzyimgProps) => (props.isloading ? 'none' : 'block')};
-    max-height: 500px;
-    max-width: 250px;
+    max-height: inherit;
+    max-width: inherit;
 `;
 
 const LoadingImgComponent = (props: LzyimgProps) => {
