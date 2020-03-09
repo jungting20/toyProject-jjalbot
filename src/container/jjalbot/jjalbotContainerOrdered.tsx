@@ -4,6 +4,8 @@ import { RootState } from '../../modules';
 import JjalbotComponent from '../../component/jjalbot/jjalbotComponent';
 import SearchComponent from '../../component/common/SearchComponent';
 import { fetch_jjal, set_searchText } from '../../modules/jjalbot';
+import { useObservable } from '../../lib/customhook';
+import { from } from 'rxjs';
 
 const JjalbotContainer = () => {
     const { imglist, searchText } = useSelector(
@@ -16,6 +18,7 @@ const JjalbotContainer = () => {
     const changeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(set_searchText(e.currentTarget.value));
     };
+
     return (
         <>
             <SearchComponent

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Imglazyloading from './imglazyloading';
+import jjalBotPage from './jjalBotPage';
 import Imgorderedloading from './imgorderedloading';
 import Gitsearchpage from './gitsearchpage';
 import Divslidepage from './divslidepage';
@@ -13,8 +13,7 @@ const RootRouterBlock = styled.div`
 function Router() {
     return (
         <Switch>
-            {/* 나머지가 아닐경우 imglzy,/ */}
-            <Route path="/imglzy" component={Imglazyloading} />
+            <Route path="/jjalbot" component={jjalBotPage} />
             <Route path="/imgord" component={Imgorderedloading} />
             <Route path="/gitsearch" component={Gitsearchpage} />
             <Route path="/divslide" component={Divslidepage} />
