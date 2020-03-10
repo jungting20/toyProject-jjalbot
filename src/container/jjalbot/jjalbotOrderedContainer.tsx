@@ -1,13 +1,11 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../modules';
-import JjalbotComponent from '../../component/jjalbot/jjalbotComponent';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchComponent from '../../component/common/SearchComponent';
+import { RootState } from '../../modules';
 import { fetch_jjal, set_searchText } from '../../modules/jjalbot';
-import { useObservable } from '../../lib/customhook';
-import { from } from 'rxjs';
+import JjalbotOrderedComponent from '../../component/jjalbot/jjalbotOrderedComponent';
 
-const JjalbotContainer = () => {
+const JjalbotOrderedContainer = () => {
     const { imglist, searchText } = useSelector(
         (state: RootState) => state.jjalbot
     );
@@ -26,9 +24,9 @@ const JjalbotContainer = () => {
                 changeEvent={changeEvent}
                 searchText={searchText}
             />
-            <JjalbotComponent imglist={imglist} />
+            <JjalbotOrderedComponent imglist={imglist} />
         </>
     );
 };
 
-export default JjalbotContainer;
+export default JjalbotOrderedContainer;

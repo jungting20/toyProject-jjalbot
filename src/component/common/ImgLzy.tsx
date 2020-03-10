@@ -35,6 +35,8 @@ const Lzyimg = (props: LzyimgProps) => {
     const startloading = useObservable(loadingstater$);
 
     const onload = (e: any) => {
+        console.log('onload');
+        props.onLoad && props.onLoad(e);
         setloading(false);
     };
     return startloading ? (
