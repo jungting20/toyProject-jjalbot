@@ -22,6 +22,7 @@ const filteringstartloader = (a: HTMLElement) =>
 
 const Lzyimg = (props: LzyimgProps) => {
     const [loading, setloading] = useState(true); // 이미지 로딩중 loading 태그 보여줄지 상태 유무
+    const [iserror, setiserror] = useState(false);
     const ImgBlockRef = createRef<HTMLElement>(); //scroll 이벤트 등록을 위한 Block의 돔이 필요
     const loadingstater$ = merge(
         isnotnullCurrentToRectOb(ImgBlockRef), //처음 렌더링 시 위치를 알기 위해 wrapping
@@ -35,14 +36,19 @@ const Lzyimg = (props: LzyimgProps) => {
     const startloading = useObservable(loadingstater$);
 
     const onload = (e: any) => {
-        console.log('onload');
-        props.onLoad && props.onLoad(e);
         setloading(false);
+    };
+
+    const onerror = (e: any) => {
+        setloading(false);
+        setiserror(true);
     };
     return startloading ? (
         <LoadingImgComponent
             {...props}
+            iserror={iserror}
             onLoad={onload}
+            onerror={onerror}
             isloading={loading}
             maxwidth="250px"
             maxheight="500px"

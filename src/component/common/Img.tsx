@@ -1,13 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import Loading from './Loading';
+import ErrorComponent from './ErrorComponent';
 
 export interface LzyimgProps {
     width?: string;
     height?: string;
     src?: string;
     isloading?: boolean;
+    iserror?: boolean;
     onLoad?: any;
+    onerror?: any;
     ref?: any;
     maxheight?: string;
     maxwidth?: string;
@@ -39,11 +42,16 @@ const LoadingImgComponent = (props: LzyimgProps) => {
     return (
         <ImgBlock>
             <Loading size="5x" isloading={props.isloading} />
-            <ImgComponent
-                src={props.src}
-                onLoad={props.onLoad}
-                isloading={props.isloading}
-            />
+            {props.iserror ? (
+                <ErrorComponent size="10x" />
+            ) : (
+                <ImgComponent
+                    src={props.src}
+                    onLoad={props.onLoad}
+                    isloading={props.isloading}
+                    onError={props.onerror}
+                />
+            )}
         </ImgBlock>
     );
 };

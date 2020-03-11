@@ -1,19 +1,11 @@
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React from 'react';
+import { from } from 'rxjs';
+import { concatMap, scan, take } from 'rxjs/operators';
 import styled from 'styled-components';
-import { Jalbottype } from '../../modules/jjalbot';
-import ImgLzy from '../common/ImgLzy';
 import { useObservable } from '../../lib/customhook';
-import { interval, from, range } from 'rxjs';
-import {
-    mergeMap,
-    concatMap,
-    map,
-    filter,
-    scan,
-    take,
-    tap,
-} from 'rxjs/operators';
-import { resolve } from 'dns';
+import { Jalbottype } from '../../modules/jjalbot';
+import ErrorComponent from '../common/ErrorComponent';
+import ImgLzy from '../common/ImgLzy';
 
 type JjalBotComponentProps = {
     imglist: Jalbottype[];
@@ -28,26 +20,26 @@ const JjalbotBlock = styled.div`
     grid-auto-rows: minmax(100px, auto);
 `;
 
-const makeImgLzy = (imgobj: Jalbottype) => (
-    <ImgLzy src={imgobj.imageUrl} key={imgobj._id} />
-);
-
 const JjalbotOrderedComponent = ({ imglist }: JjalBotComponentProps) => {
     const listState = useObservable(
         from(imglist).pipe(
-            concatMap((imgobj: Jalbottype) => {
+            concatMap((imgobj: Jalbottype, i) => {
                 const img = new Image();
                 return new Promise<JSX.Element>(resolve => {
                     const onload = () => {
-                        resolve(<>{img}</>);
+                        resolve(
+                            <ImgLzy src={imgobj.imageUrl} key={imgobj._id} />
+                        );
+                    };
+                    const onerror = () => {
+                        console.log(`${i}번 이미지 로딩 실패`);
+                        resolve(<ErrorComponent size="10x" key={imgobj._id} />);
                     };
                     img.onload = onload;
+                    img.onerror = onerror;
                     img.src = imgobj.imageUrl;
                 });
             }),
-            tap(console.log),
-            filter(a => !!a),
-            take(4),
             scan<JSX.Element, JSX.Element[]>(
                 (acc, curr) => acc.concat(curr),
                 []
@@ -55,9 +47,6 @@ const JjalbotOrderedComponent = ({ imglist }: JjalBotComponentProps) => {
         ),
         [imglist]
     );
-    /* const totallist =
-        listState &&
-        listState.map(a => <ImgLzy src={a.imageUrl} key={a._id} />); */
 
     return <JjalbotBlock>{listState}</JjalbotBlock>;
 };
