@@ -6,6 +6,11 @@ const instance = axios.create({
     baseURL: 'https://jjalbot.com/api/jjals',
 });
 
+axios({
+    url: 'https://www.dailysecu.com/news/photo/201911/78344_76892_1943.png',
+    method: 'get',
+}).then(a => console.log('axios', a));
+
 export const fetchImgList = (text: string): Observable<Jalbottype[]> => {
     return from(
         instance.get('/', {
