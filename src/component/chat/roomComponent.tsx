@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
+import { Room } from '../../modules/room';
+
+interface RoomComponentProps {
+    roomList: Room[];
+}
 
 const RoomComponentBlock = styled.div`
     /* width: 300px; */
@@ -18,94 +23,6 @@ const RoomComponentBlock = styled.div`
         grid-column: 2;
     }
 `;
-
-const roomlist = [
-    {
-        roomnumber: 1,
-        id: ['정호', '탈슈'],
-        length: 4,
-        title: '테스트1',
-        chatlist: [
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-        ],
-    },
-    {
-        roomnumber: 2,
-        id: ['정호', '탈슈'],
-        length: 2,
-        title: '테스트2',
-        chatlist: [
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-        ],
-    },
-    {
-        roomnumber: 3,
-        id: ['정호', '탈슈'],
-        length: 3,
-        title: '테스트3',
-        chatlist: [
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생 sadijasdjadlaljdasjklasjldjaslkdjlkasj',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message: '아니 인생',
-            },
-            {
-                createdat: '09:11',
-                message:
-                    '아니 인생 sadijasdjadlaljdasjklasjldjaslkdjlkasjasdasdasdasd',
-            },
-        ],
-    },
-];
 
 const OptionArea = styled.div`
     background-color: #783c00;
@@ -156,30 +73,26 @@ const LastContentBox = styled.div`
     border: none;
 `;
 
-const RoomComponent = () => {
+const RoomComponent = ({ roomList }: RoomComponentProps) => {
     return (
         <RoomComponentBlock>
             <OptionArea className="option" />
             <ChatArea className="chat">
                 <RoomTitleComponent>채팅</RoomTitleComponent>
-                {roomlist.map(room => (
+                {roomList.map(room => (
                     <ItemComponentBlock>
                         <RoomContentTopDiv>
                             <NameSpanComponentBlock>
-                                {room['id'].map(user => (
+                                {room.memberList.map(user => (
                                     <NameSpanComponent>
-                                        {user},
+                                        {user.nickname},
                                     </NameSpanComponent>
                                 ))}
                             </NameSpanComponentBlock>
                             <ShowTimeComponent>9:10</ShowTimeComponent>
                         </RoomContentTopDiv>
                         <LastContentBox>
-                            {
-                                room['chatlist'][room['chatlist'].length - 1][
-                                    'message'
-                                ]
-                            }
+                            {room.Lastmessage.content}
                         </LastContentBox>
                     </ItemComponentBlock>
                 ))}

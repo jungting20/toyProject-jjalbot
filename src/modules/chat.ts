@@ -2,56 +2,53 @@ import { Observable } from 'rxjs';
 import { ofType } from 'redux-observable';
 import { switchMap, mergeMap, map } from 'rxjs/operators';
 import { fetchImgList } from '../lib/api/jjalbotapi';
-
-export interface userMap {
-    [key: string]: string;
-}
-
-export interface chat {
-    content: string;
-    userid: number;
-}
+import { User } from './room';
 
 //--declare type
-export interface Room {
-    id: number;
-    chatlist: chat[];
-    users: userMap;
+
+export interface Chat {
+    content: string;
+    user: User;
+    createdtime: Date;
 }
 
-export interface Metadata {
-    type: string;
-    width: number;
-    height: number;
-}
 //--end declare type
 
 //----types----
-const FETCH_JJAL = 'jjal/FETCH_JJAL' as const;
-const SET_JJAL = 'jjal/SET_JJAL' as const;
-const SET_SEARCHTEXT = 'jjal/SET_SEARCHTEXT' as const;
+
+const FETCH_CHAT = 'chat/FETCH_CHAT' as const;
+const SET_CHAT = 'chat/SET_CHAT' as const;
+const MAKE_CHAT = 'chat/MAKE_CHAT' as const;
+const UPDATE_CHAT = 'chat/UPDATE_CHAT' as const;
 
 //-------end types-----------------
 
 //--actions--
-export const fetch_jjal = (text: string) => ({
-    type: FETCH_JJAL,
-    payload: text,
+export const fetch_chat = () => ({
+    type: FETCH_CHAT,
 });
-/* export const set_jjal = (jjallist: Jalbottype[]) => ({
-    type: SET_JJAL,
-    payload: jjallist,
-}); */
 
-export const set_searchText = (text: string) => ({
-    type: SET_SEARCHTEXT,
-    payload: text,
+export const set_chat = (chatList: Chat[]) => ({
+    type: SET_CHAT,
+    payload: chatList,
+});
+
+export const make_chat = (chat: Chat) => ({
+    type: MAKE_CHAT,
+    payload: chat,
+});
+
+export const update_chat = (chat: Chat) => ({
+    type: UPDATE_CHAT,
+    payload: chat,
 });
 
 //--end actions---
 
 //--action type
-/* type jjal_actions = ReturnType<typeof set_jjal | typeof fetch_jjal | typeof set_searchText>; */
+type room_actions = ReturnType<
+    typeof fetch_chat | typeof set_chat | typeof make_chat | typeof update_chat
+>;
 
 /* export const jjalbotFetchEpic = (action$: Observable<any>) =>
     action$.pipe(
@@ -63,35 +60,48 @@ export const set_searchText = (text: string) => ({
         )
     ) */
 //--end action type
-/* export type JjalBotInitialStateType = {
-    searchText: string;
-    imglist: Jalbottype[];
-    isLoading: boolean;
-}; */
-
-/* const initialstate: JjalBotInitialStateType = {
-    searchText: '',
-    imglist: [],
-    isLoading: false,
+let testchat: Chat = {
+    createdtime: new Date(),
+    user: {
+        id: 1,
+        nickname: 'test',
+        email: 'testman',
+    },
+    content: '인생갱당함',
 };
 
- */
+let chatlist = [testchat, testchat, testchat];
 
-/* function jjalbotReducer(
-    state: JjalBotInitialStateType = initialstate,
-    action: jjal_actions
-) {
+export type ChatInitialStateType = {
+    chatList: Chat[];
+    userList: User[];
+};
+
+const initialstate: ChatInitialStateType = {
+    chatList: chatlist,
+    userList: [],
+};
+
+function chatReducer(
+    state: ChatInitialStateType = initialstate,
+    action: room_actions
+): ChatInitialStateType {
     switch (action.type) {
-        case FETCH_JJAL:
-            return { ...state };
-        case SET_JJAL:
-            return { ...state, imglist: action.payload };
-        case SET_SEARCHTEXT:
-            return { ...state, searchText: action.payload };
+        case FETCH_CHAT:
+            return state;
+        case SET_CHAT:
+            return { ...state, chatList: action.payload };
+        case MAKE_CHAT:
+            return {
+                ...state,
+                chatList: state.chatList.concat(action.payload),
+            };
+        case UPDATE_CHAT: {
+            return state;
+        }
         default:
             return state;
     }
 }
 
-export default jjalbotReducer;
- */
+export default chatReducer;

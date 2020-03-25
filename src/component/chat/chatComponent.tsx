@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
+import { Chat } from '../../modules/chat';
 
 interface ChatProps {
-    isme: Boolean;
+    chatList: Chat[];
 }
 
 const ChatComponentBlock = styled.div`
@@ -65,12 +66,12 @@ const chatlist = [
     },
 ];
 
-const ChatComponent = () => {
+const ChatComponent = ({ chatList }: ChatProps) => {
     return (
         <ChatComponentBlock>
             <ChatTopBlock />
             <ChatContentBlock>
-                {chatlist.map(chat => {
+                {chatList.map(chat => {
                     let isme = chat.id === 'me';
                     return (
                         <ChatContent isme={isme}>
