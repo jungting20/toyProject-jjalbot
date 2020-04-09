@@ -27,7 +27,7 @@ function Header() {
                 <Button to="/jjalbot">짤봇!</Button>
                 <Button to="/jjalbotordered">짤봇 이미지 순차로딩</Button>
                 <Button to="/chat">채팅</Button>
-                <Button to="/gitsearch">깃검색페이지</Button>
+                <Button to="/login">로그인</Button>
             </Wrapper>
         </HeaderBlock>
     );

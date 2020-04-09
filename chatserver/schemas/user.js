@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const { Schema } = mongoose;
 const {
@@ -19,11 +20,36 @@ const userSchema = new Schema({
 userSchema.methods.setPassword = async function(password) {
     const hash = await bcrypt.hash(password, 10);
     this.password = hash;
+    return this;
 };
 
 userSchema.methods.checkPassword = async function(password) {
     const result = await bcrypt.compare(password, this.password);
-    return result;
+    if (result) {
+        return result;
+    } else {
+        return null;
+    }
+};
+
+userSchema.methods.serialize = function() {
+    const data = this.toJSON();
+    delete data.password;
+    return data;
+};
+
+userSchema.methods.generateToken = function() {
+    const token = jwt.sign(
+        {
+            _id: this.id,
+            email: this.email,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: '7d',
+        }
+    );
+    return token;
 };
 
 userSchema.statics.findbyUsername = function(email) {

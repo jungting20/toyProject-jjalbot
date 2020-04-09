@@ -26,5 +26,14 @@ const roomSchema = new Schema({
         default: Date.now,
     },
 });
+roomSchema.methods.addUser = function(user) {
+    const userid = user._id;
+    if (!this.users.includes(userid)) {
+        this.users.push(user._id);
+        return this.save();
+    }
+    console.log('이미포함');
+    return this;
+};
 
 module.exports = mongoose.model('Room', roomSchema);

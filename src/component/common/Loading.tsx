@@ -2,11 +2,11 @@ import React from 'react';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
-import styled, { ThemedStyledFunction } from 'styled-components';
+import styled from 'styled-components';
 
 interface LoadingProps {
     size?: SizeProp;
-    isloading?: Boolean;
+    isloading?: boolean;
 }
 
 const LoadingBlock = styled.div<LoadingProps>`

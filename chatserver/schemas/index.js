@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGO_URL = 'mongodb://root:1234@localhost:27017/admin';
+const MONGO_URL = `mongodb://${process.env.MONGO_URI}`;
 
 module.exports = () => {
     const connect = () => {

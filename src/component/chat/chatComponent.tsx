@@ -51,27 +51,12 @@ const Message = styled.div`
     font-weight: 600;
 `;
 
-const chatlist = [
-    {
-        id: 'me',
-        message: '안녕 쀼',
-    },
-    {
-        id: 'others',
-        message: '탈슈의 메세지',
-    },
-    {
-        id: 'me',
-        message: '극한의 호',
-    },
-];
-
 const ChatComponent = ({ chatList }: ChatProps) => {
     return (
         <ChatComponentBlock>
             <ChatTopBlock />
             <ChatContentBlock>
-                {chatList.map(chat => {
+                {/* {chatList.map(chat => {
                     let isme = chat.id === 'me';
                     return (
                         <ChatContent isme={isme}>
@@ -80,7 +65,7 @@ const ChatComponent = ({ chatList }: ChatProps) => {
                             </Message>
                         </ChatContent>
                     );
-                })}
+                })} */}
             </ChatContentBlock>
             <ChatInputBoxBlock />
         </ChatComponentBlock>

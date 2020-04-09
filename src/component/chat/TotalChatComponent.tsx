@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import ChatComponent from './chatComponent';
+//import ChatComponent from './chatComponent';
 import RoomComponent from './roomComponent';
 import { Room } from '../../modules/room';
+import { OpenRoom } from '../../modules/openroom';
 import { Chat } from '../../modules/chat';
 
 interface TotalChatComponentProps {
     roomList: Room[];
+    openroomList: OpenRoom[];
     chatList?: Chat[];
 }
 
@@ -20,10 +22,11 @@ const TotalChatComponentBlock = styled.div`
 const TotalChatComponent = ({
     roomList,
     chatList,
+    openroomList,
 }: TotalChatComponentProps) => (
     <TotalChatComponentBlock>
-        <RoomComponent roomList={roomList} />
-        <ChatComponent chatList={chatList} />
+        <RoomComponent roomList={roomList} openroomList={openroomList} />
+        {/* <ChatComponent chatList={chatList} /> */}
     </TotalChatComponentBlock>
 );
 

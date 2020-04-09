@@ -15,6 +15,13 @@ const chatSchema = new Schema({
         required: true,
         ref: 'User',
     },
+    content: String,
+    checkedUserList: [
+        {
+            type: ObjectId,
+            ref: 'User',
+        },
+    ],
     createdAt: {
         type: Date,
         default: Date.now,

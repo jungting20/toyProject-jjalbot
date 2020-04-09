@@ -9,13 +9,6 @@ export interface User {
     nickname: string;
 }
 
-export interface Chat {
-    content: string;
-    userid: number;
-    userEmail: string;
-    createdtime: Date;
-}
-
 //--declare type
 export interface Room {
     id: number;

@@ -1,14 +1,26 @@
+require('dotenv').config();
 const express = require('express');
 const connect = require('./schemas');
+const cookieparser = require('cookie-parser');
+const { jwtMiddleware } = require('./middleware/jwtmiddleware.js');
+const webSocket = require('./socket');
 const app = express();
-const port = 8000;
+const port = process.env.port || 4000;
+const cors = require('cors');
 connect();
+app.use(cors());
 const userapi = require('./api/user');
+const roomapi = require('./api/room');
+app.use(cookieparser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use('/user', userapi);
+//app.use(jwtMiddleware);
+app.use('/room', roomapi);
 
 //app.get('/', (req, res) => res.json({ data: 'test', kkkrt: '인생너무빡샘' }));
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const server = app.listen(port, () =>
+    console.log(`Example app listening on port ${port}!`)
+);
+webSocket(server, app);
