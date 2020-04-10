@@ -70,6 +70,7 @@ export const loginFetchEpic = (action$: Observable<any>) =>
         switchMap(action =>
             fetchLogin(action.payload).pipe(
                 map((user: any) => set_login(user)),
+                //tap(resoponse => console.log('탭탭탭', resoponse)),
                 catchError((e: any) => {
                     return of(set_error(e.message));
                 })
@@ -83,7 +84,7 @@ export const loginFetchEpic = (action$: Observable<any>) =>
 export type LoginInitialStateType = {
     login: Login;
     auth: Nullable<User>;
-    authError: string;
+    authError: Nullable<string>;
 };
 
 const initialstate: LoginInitialStateType = {
@@ -92,7 +93,7 @@ const initialstate: LoginInitialStateType = {
         password: '',
     },
     auth: null,
-    authError: '',
+    authError: null,
 };
 
 function loginReducer(

@@ -10,6 +10,7 @@ interface AuthFormComponentProps {
     submit: (e: React.FormEvent<HTMLFormElement>) => void;
     email: string;
     password: string;
+    error: null | string;
 }
 
 const AuthBlock = styled.div``;
@@ -54,6 +55,11 @@ const StyledInput = styled.input`
     }
 `;
 
+const Error = styled.div`
+    font-size: 2px;
+    color: red;
+`;
+
 const Footer = styled.div`
     margin-top: 2rem;
     text-align: right;
@@ -93,6 +99,7 @@ const AuthFormComponent = (props: AuthFormComponentProps) => {
                         value={props.password}
                     />
                     <Button>로그인</Button>
+                    {props.error ? <Error>{props.error}</Error> : ''}
                 </form>
             </AuthFormBlcok>
         </AuthBlock>

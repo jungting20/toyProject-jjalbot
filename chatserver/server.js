@@ -7,8 +7,10 @@ const webSocket = require('./socket');
 const app = express();
 const port = process.env.port || 4000;
 const cors = require('cors');
+//const { handleError } = require('./lib/CustomError');
 connect();
 app.use(cors());
+
 const userapi = require('./api/user');
 const roomapi = require('./api/room');
 app.use(cookieparser());

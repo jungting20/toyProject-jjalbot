@@ -2,6 +2,9 @@ const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
 const User = require('../schemas/user');
+
+//const { ErrorHandler } = require('../lib/CustomError');
+
 router.post('/register', async (req, res) => {
     const schema = Joi.object().keys({
         email: Joi.string(),
@@ -11,7 +14,6 @@ router.post('/register', async (req, res) => {
     console.log(email, password);
     const result = Joi.validate({ email, password }, schema);
     if (result.error) {
-        console.log('여기인가');
         return res.status(400).json({ code: 400, message: '에러' });
     }
 
@@ -41,7 +43,6 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    console.log('로그인');
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -56,6 +57,7 @@ router.post('/login', async (req, res) => {
         const user = await User.findbyUsername(email);
 
         if (!user) {
+            //throw new ErrorHandler('401', '아이디가 존재하지 않습니다');
             res.status(401).json({
                 code: 401,
                 message: '아이디가 존재하지 않습니다',

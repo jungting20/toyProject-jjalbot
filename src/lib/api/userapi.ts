@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { from, of, Observable } from 'rxjs';
 import { pluck, catchError, tap, map } from 'rxjs/operators';
 import { User, Login } from '../../modules/login';
@@ -7,7 +7,12 @@ const instance = axios.create({
 });
 
 export const fetchLogin = (loginobj: Login): Observable<User[]> => {
-    return from(instance.post('/login', loginobj)).pipe(
+    return from(
+        instance.post('/login', loginobj).catch(error => {
+            throw error.response.data;
+            //return Error(error.response.data);
+        })
+    ).pipe(
         pluck('data'),
         map(({ data }) => data)
         /* catchError(error => {
