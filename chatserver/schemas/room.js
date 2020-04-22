@@ -26,10 +26,9 @@ const roomSchema = new Schema({
         default: Date.now,
     },
 });
-roomSchema.methods.addUser = function(user) {
-    const userid = user._id;
+roomSchema.methods.joinUser = function(userid) {
     if (!this.users.includes(userid)) {
-        this.users.push(user._id);
+        this.users.push(userid);
         return this.save();
     }
     console.log('이미포함');

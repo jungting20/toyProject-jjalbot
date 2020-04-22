@@ -10,16 +10,12 @@ const chatSchema = new Schema({
         required: true,
         ref: 'Room',
     },
-    user: {
-        type: ObjectId,
-        required: true,
-        ref: 'User',
-    },
+    nickname: String,
     content: String,
     checkedUserList: [
         {
             type: ObjectId,
-            ref: 'User',
+            ref: 'Nickname',
         },
     ],
     createdAt: {

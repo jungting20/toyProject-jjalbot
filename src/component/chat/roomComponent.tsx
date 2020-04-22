@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
-import { Room } from '../../modules/room';
+import { Room } from '../../modules/myroom';
 import { OpenRoom } from '../../modules/openroom';
 import { Route, Switch, Link } from 'react-router-dom';
 import { faComment, faChalkboard } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +12,15 @@ interface RoomComponentProps {
 }
 interface OpenRoomComponentProps {
     openroomList: OpenRoom[];
+    doubleClick: (id: string) => void;
 }
+
+interface OpenRoomItemProps {
+    id: string;
+    doubleClick: (id: string) => void;
+    title: string;
+}
+
 const RoomComponentBlock = styled.div`
     width: 300px;
     height: 500px;
@@ -86,22 +94,27 @@ const LastContentBox = styled.div`
     border: none;
 `;
 
-const OpenRoomList = styled.div`
+const OpenRoomItem = styled.div`
     &:hover {
         background-color: yellow;
     }
 `;
 
+const OpenRoomList = ({ id, doubleClick, title }: OpenRoomItemProps) => {
+    const ondoubleClick = () => doubleClick(id);
+    return <OpenRoomItem onDoubleClick={ondoubleClick}> {title}</OpenRoomItem>;
+};
+
 const MyRoomListComponent = ({ roomList }: RoomComponentProps) => (
     <ChatArea className="chat">
-        <RoomTitleComponent>채팅</RoomTitleComponent>
+        <RoomTitleComponent>내 채팅</RoomTitleComponent>
         {roomList.map(room => (
             <ItemComponentBlock key={room.id}>
                 <RoomContentTopDiv>
                     <NameSpanComponentBlock>
-                        {room.memberList.map(user => (
-                            <NameSpanComponent key={user.id}>
-                                {user.nickname},
+                        {room.memberList.map(member => (
+                            <NameSpanComponent key={member.user._id}>
+                                {member.nickname},
                             </NameSpanComponent>
                         ))}
                     </NameSpanComponentBlock>
@@ -113,10 +126,18 @@ const MyRoomListComponent = ({ roomList }: RoomComponentProps) => (
     </ChatArea>
 );
 
-const OpenRoomListComponent = ({ openroomList }: OpenRoomComponentProps) => (
+const OpenRoomListComponent = ({
+    openroomList,
+    doubleClick,
+}: OpenRoomComponentProps) => (
     <ChatArea className="chat">
         {openroomList.map(openroom => (
-            <OpenRoomList key={openroom._id}>{openroom.title}</OpenRoomList>
+            <OpenRoomList
+                key={openroom._id}
+                id={openroom._id}
+                doubleClick={doubleClick}
+                title={openroom.title}
+            ></OpenRoomList>
         ))}
     </ChatArea>
 );
@@ -124,6 +145,7 @@ const OpenRoomListComponent = ({ openroomList }: OpenRoomComponentProps) => (
 const RoomComponent = ({
     roomList,
     openroomList,
+    doubleClick,
 }: RoomComponentProps & OpenRoomComponentProps) => {
     return (
         <RoomComponentBlock>
@@ -149,7 +171,10 @@ const RoomComponent = ({
                     exact
                     path="/(chat|chat/openroom)"
                     render={() => (
-                        <OpenRoomListComponent openroomList={openroomList} />
+                        <OpenRoomListComponent
+                            openroomList={openroomList}
+                            doubleClick={doubleClick}
+                        />
                     )}
                 />
             </Switch>

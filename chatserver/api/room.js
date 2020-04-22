@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Room = require('../schemas/room');
-//const { checklogin } = require('../middleware/jwtmiddleware');
+const Chat = require('../schemas/chat');
+const User = require('../schemas/user');
+const Nickname = require('../schemas/nickname');
+const { checklogin } = require('../middleware/jwtmiddleware');
 
 router.get('/Room/:id', async (req, res) => {
     console.log(req.params.id);
@@ -9,10 +12,9 @@ router.get('/Room/:id', async (req, res) => {
     console.log(room);
     res.status(200).json(room);
 });
-router.post('/Room', async (req, res) => {
+router.post('/Room', checklogin, async (req, res) => {
     const io = req.app.get('io').of('/room');
     const user = res.user;
-    console.log(user, '유저');
     const body = req.body;
     const room = new Room({
         title: body.title,
@@ -31,11 +33,45 @@ router.get('/openRoomList', async (req, res) => {
     return res.status(200).json({ code: 200, message: '성공', data: roomList });
 });
 
-router.post('/addUser/:id', async (req, res) => {
-    const room = await Room.findById(req.params.id);
-    room.addUser(res.user);
-    console.log('room', room);
-    res.status(200).json({ code: 200, data: '성공' });
-});
+router.post(
+    '/joinUser',
+    /* checklogin */ async (req, res) => {
+        const { roomid, userid, nickname } = req.body;
+        const room = await Room.findById(roomid);
+        const nicknameschema = new Nickname({
+            room: roomid,
+            user: userid,
+            nickname: nickname,
+        });
+        await nicknameschema.save();
+        await room.joinUser(userid);
+        const chatList = await Chat.find()
+            .where('room')
+            .equals(roomid);
+
+        const me = await User.findById(userid);
+
+        const myroomList = await me.addRoom(roomid);
+
+        //const users = await User.find();
+        //console.log(users);
+        //await room.joinUser(userid);
+        /* 
+    const chatio = req.app.get('io').of('/chat');
+}
+    chatio.to(roomid).emit('joinUser', {
+        userid,
+        nickname: 'system',
+        roomid,
+        content: `${nickname}님이 참가 하셨습니다`,
+        createdtime: new Date(),
+    }); */
+        return res.status(200).json({
+            code: 200,
+            message: '성공',
+            data: { chatList, myroomList, nickname },
+        });
+    }
+);
 
 module.exports = router;

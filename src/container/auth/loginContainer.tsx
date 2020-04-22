@@ -24,7 +24,6 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(email, password, '엥');
         dispatch(fetch_login({ email, password }));
     };
 

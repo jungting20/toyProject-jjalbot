@@ -1,17 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
-import { Chat } from '../../modules/chat';
+import { Chat, CurrentRoom } from '../../modules/chat';
 
 interface ChatProps {
     chatList: Chat[];
+    currentRoom: CurrentRoom;
+    enterEvent: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const ChatComponentBlock = styled.div`
+interface ChatComponentProps {
+    isopen: boolean;
+}
+
+const ChatComponentBlock = styled.div<ChatComponentProps>`
     width: 350px;
     height: 500px;
     border: 1px solid black;
-    display: flex;
+    display: ${props => (props.isopen ? 'flex' : 'none')};
     flex-direction: column;
 `;
 const ChatTopBlock = styled.div`
@@ -32,7 +38,7 @@ const ChatInputBoxBlock = styled.div`
     padding: 10px;
 `;
 
-const ChatContent = styled.div<ChatProps>`
+const ChatContent = styled.div`
     display: flex;
     flex-direction: column;
     .my-chats {
@@ -51,23 +57,34 @@ const Message = styled.div`
     font-weight: 600;
 `;
 
-const ChatComponent = ({ chatList }: ChatProps) => {
+const ChatComponent = ({ chatList, currentRoom, enterEvent }: ChatProps) => {
+    const KeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            if (e.currentTarget.value.trim().length > 0) {
+                console.log('채팅입력이벤트');
+                enterEvent(e);
+            }
+        }
+    };
+
     return (
-        <ChatComponentBlock>
+        <ChatComponentBlock isopen={currentRoom.isopen}>
             <ChatTopBlock />
             <ChatContentBlock>
-                {/* {chatList.map(chat => {
-                    let isme = chat.id === 'me';
+                {chatList.map((chat, index) => {
+                    let isme = chat.nickname === currentRoom.nickname;
                     return (
-                        <ChatContent isme={isme}>
+                        <ChatContent key={index}>
                             <Message className={isme ? 'my-chats' : 'others'}>
-                                {chat.message}
+                                {chat.content}
                             </Message>
                         </ChatContent>
                     );
-                })} */}
+                })}
             </ChatContentBlock>
-            <ChatInputBoxBlock />
+            <ChatInputBoxBlock>
+                <input onKeyPress={KeyPress}></input>
+            </ChatInputBoxBlock>
         </ChatComponentBlock>
     );
 };

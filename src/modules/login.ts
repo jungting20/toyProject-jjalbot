@@ -111,7 +111,7 @@ function loginReducer(
             let setPasswordObj = { ...state.login, password: action.payload };
             return { ...state, login: setPasswordObj };
         case SET_LOGIN:
-            return { ...state, auth: action.payload };
+            return { ...state, auth: action.payload, authError: null };
         case SET_ERROR:
             return { ...state, authError: action.payload };
         default:

@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import { Observable } from 'rxjs';
 
 export const onlyone = (fn: Function) => {
     let isexcute = false;
@@ -12,7 +13,19 @@ export const onlyone = (fn: Function) => {
 
 export const isnotnull = (a: any) => a !== null;
 
-export function createAction<T, P extends (...args: any) => any>(
+export const fromSocketEvent = <T>(
+    socket: SocketIOClient.Socket,
+    eventname: string
+) => {
+    return new Observable(subscriber => {
+        socket.on(eventname, (data: T) => {
+            subscriber.next(data);
+        });
+        return () => socket.disconnect();
+    });
+};
+
+/* export function createAction<T, P extends (...args: any) => any>(
     type: T,
     payloadCreator: P
 ): (...args: Parameters<P>) => Action<T> & { payload: ReturnType<P> };
@@ -23,3 +36,4 @@ export function createAction(type: any, payloadCreator?: any) {
         ...(payloadCreator && { payload: payloadCreator(...args) }),
     });
 }
+ */

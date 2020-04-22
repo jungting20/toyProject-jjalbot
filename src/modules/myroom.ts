@@ -2,22 +2,32 @@ import { Observable } from 'rxjs';
 import { ofType } from 'redux-observable';
 import { switchMap, mergeMap, map } from 'rxjs/operators';
 import { fetchImgList } from '../lib/api/jjalbotapi';
+import { User } from './login';
 
-export interface User {
+//--declare type
+/* export interface User {
     id: number;
     email: string;
     nickname: string;
+} */
+export interface Member {
+    user: User;
+    nickname: string;
 }
 
-//--declare type
 export interface Room {
     id: number;
-    memberList: User[];
+    memberList: Member[];
     Lastmessage: {
         createdtime: Date;
         content: string;
     };
     createdUser: User;
+}
+
+export interface CurrentRoom {
+    id: string | null;
+    isopen: boolean;
 }
 
 //--end declare type
@@ -28,6 +38,7 @@ const FETCH_ROOM = 'room/FETCH_ROOM' as const;
 const SET_ROOM = 'room/SET_ROOM' as const;
 const MAKE_ROOM = 'room/MAKE_ROOM' as const;
 const UPDATE_ROOM = 'room/UPDATE_ROOM' as const;
+const SET_CURRENTROOM = 'room/SET_CURRENTROOM' as const;
 
 //-------end types-----------------
 
@@ -51,63 +62,33 @@ export const update_room = (room: Room) => ({
     payload: room,
 });
 
+export const set_currentroom = (roomobj: CurrentRoom) => ({
+    type: SET_CURRENTROOM,
+    payload: roomobj,
+});
+
 //--end actions---
 
 //--action type
 type room_actions = ReturnType<
-    typeof fetch_room | typeof set_room | typeof make_room | typeof update_room
+    | typeof fetch_room
+    | typeof set_room
+    | typeof make_room
+    | typeof update_room
+    | typeof set_currentroom
 >;
-
-/* export const jjalbotFetchEpic = (action$: Observable<any>) =>
-    action$.pipe(
-        ofType(FETCH_JJAL),
-        switchMap(action =>
-            fetchImgList(action.payload).pipe(
-                map((imglist: Jalbottype[]) => set_jjal(imglist))
-            )
-        )
-    ) */
-//--end action type
-let testroom: Room = {
-    id: 1,
-    memberList: [
-        {
-            id: 1,
-            email: 'aho',
-            nickname: 'jh1',
-        },
-        {
-            id: 2,
-            email: 'bho',
-            nickname: 'jh2',
-        },
-        {
-            id: 3,
-            email: 'cho',
-            nickname: 'jh3',
-        },
-    ],
-    createdUser: {
-        id: 1,
-        email: 'aho',
-        nickname: 'jh1',
-    },
-    Lastmessage: {
-        createdtime: new Date(),
-        content: '오잉',
-    },
-};
-
-let roomlist = [testroom, testroom, testroom];
 
 export type RoomInitialStateType = {
     roomList: Room[];
-    currentOpenRoom: number;
+    currentOpenRoom: CurrentRoom;
 };
 
 const initialstate: RoomInitialStateType = {
-    roomList: roomlist,
-    currentOpenRoom: 0,
+    roomList: [],
+    currentOpenRoom: {
+        id: null,
+        isopen: false,
+    },
 };
 
 function roomReducer(
@@ -126,6 +107,9 @@ function roomReducer(
             };
         case UPDATE_ROOM: {
             return state;
+        }
+        case SET_CURRENTROOM: {
+            return { ...state, currentOpenRoom: action.payload };
         }
         default:
             return state;

@@ -6,6 +6,7 @@ const jwtMiddleware = async function(req, res, next) {
     console.log('미들웨어', token);
     if (!token) {
         next();
+        return;
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -26,9 +27,11 @@ const jwtMiddleware = async function(req, res, next) {
 
         //console.log('user', res.user);
         next();
+        return;
     } catch (e) {
         console.log(e, '에러');
         next();
+        return;
     }
 };
 

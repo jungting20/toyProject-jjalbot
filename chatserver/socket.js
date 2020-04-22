@@ -16,19 +16,14 @@ module.exports = (server, app) => {
 
     chat.on('connection', socket => {
         console.log('chat 네임스페이스에 접속');
-        const req = socket.request;
-        const {
-            headers: { referer },
-        } = req;
-        const roomId = referer
-            .split('/')
-            [referer.split('/').length - 1].replace(/\?.+/, '');
-        socket.join(roomId);
-        /* socket.to(roomId).emit('join', {
-            user: 'system',
-            chat: `${req.session.color}님이 입장하셨습니다.`,
-        }); */
-        socket.on('disconnect', () => {
+        const { roomid } = socket.handshake.query;
+        //console.log(roomid);
+        socket.join(roomid);
+        socket.to(roomid).emit('test', {
+            message: 'test',
+        });
+
+        /*    socket.on('disconnect', () => {
             console.log('chat 네임스페이스 접속 해제');
             socket.leave(roomId);
             const currentRoom = socket.adapter.rooms[roomId];
@@ -48,6 +43,6 @@ module.exports = (server, app) => {
                     chat: `${req.session.color}님이 퇴장하셨습니다.`,
                 });
             }
-        });
+        }); */
     });
 };

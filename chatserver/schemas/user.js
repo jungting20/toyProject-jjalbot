@@ -51,6 +51,10 @@ userSchema.methods.generateToken = function() {
     );
     return token;
 };
+userSchema.methods.addRoom = function(roomid) {
+    this.rooms.push(roomid);
+    return this.rooms;
+};
 
 userSchema.statics.findbyUsername = function(email) {
     return this.findOne({ email });
