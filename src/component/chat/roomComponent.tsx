@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
-import { Room } from '../../modules/myroom';
+import { Room } from '../../modules/chat';
 import { OpenRoom } from '../../modules/openroom';
 import { Route, Switch, Link } from 'react-router-dom';
 import { faComment, faChalkboard } from '@fortawesome/free-solid-svg-icons';
@@ -9,18 +9,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface RoomComponentProps {
     roomList: Room[];
+    myRoomdoubleClick: (id: string) => void;
 }
 interface OpenRoomComponentProps {
     openroomList: OpenRoom[];
-    doubleClick: (id: string) => void;
+    openRoomdoubleClick: (id: string) => void;
 }
 
 interface OpenRoomItemProps {
     id: string;
-    doubleClick: (id: string) => void;
+    openRoomdoubleClick: (id: string) => void;
     title: string;
 }
 
+interface MyRoomItemProps {
+    _id: string;
+    myRoomdoubleClick: (id: string) => void;
+    joinedusers: any[];
+}
 const RoomComponentBlock = styled.div`
     width: 300px;
     height: 500px;
@@ -49,7 +55,9 @@ const OptionItemBlock = styled.div`
     margin-top: 10px;
 `;
 
-const ChatArea = styled.div``;
+const ChatArea = styled.div`
+    overflow: auto;
+`;
 
 const RoomTitleComponent = styled.div`
     height: 90px;
@@ -100,44 +108,67 @@ const OpenRoomItem = styled.div`
     }
 `;
 
-const OpenRoomList = ({ id, doubleClick, title }: OpenRoomItemProps) => {
-    const ondoubleClick = () => doubleClick(id);
-    return <OpenRoomItem onDoubleClick={ondoubleClick}> {title}</OpenRoomItem>;
+const OpenRoomItemWrapper = ({
+    id,
+    openRoomdoubleClick,
+    title,
+}: OpenRoomItemProps) => {
+    const ondoubleClick = () => openRoomdoubleClick(id);
+    return <OpenRoomItem onDoubleClick={ondoubleClick}>{title}</OpenRoomItem>;
 };
 
-const MyRoomListComponent = ({ roomList }: RoomComponentProps) => (
+const MyRoomItemWrapper = ({
+    _id,
+    joinedusers,
+    myRoomdoubleClick,
+}: MyRoomItemProps) => {
+    const ondoubleClick = () => myRoomdoubleClick(_id);
+    return (
+        <ItemComponentBlock onDoubleClick={ondoubleClick}>
+            <RoomContentTopDiv>
+                <NameSpanComponentBlock>
+                    {joinedusers.map(member => (
+                        <NameSpanComponent key={member.userid}>
+                            {member.nickname},
+                        </NameSpanComponent>
+                    ))}
+                </NameSpanComponentBlock>
+                <ShowTimeComponent>9:10</ShowTimeComponent>
+            </RoomContentTopDiv>
+            {/* <LastContentBox>{room.Lastmessage.content}</LastContentBox> */}
+        </ItemComponentBlock>
+    );
+};
+
+const MyRoomListComponent = ({
+    roomList,
+    myRoomdoubleClick,
+}: RoomComponentProps) => (
     <ChatArea className="chat">
         <RoomTitleComponent>내 채팅</RoomTitleComponent>
         {roomList.map(room => (
-            <ItemComponentBlock key={room.id}>
-                <RoomContentTopDiv>
-                    <NameSpanComponentBlock>
-                        {room.memberList.map(member => (
-                            <NameSpanComponent key={member.user._id}>
-                                {member.nickname},
-                            </NameSpanComponent>
-                        ))}
-                    </NameSpanComponentBlock>
-                    <ShowTimeComponent>9:10</ShowTimeComponent>
-                </RoomContentTopDiv>
-                <LastContentBox>{room.Lastmessage.content}</LastContentBox>
-            </ItemComponentBlock>
+            <MyRoomItemWrapper
+                key={room._id}
+                _id={room._id}
+                joinedusers={room.joinedusers}
+                myRoomdoubleClick={myRoomdoubleClick}
+            />
         ))}
     </ChatArea>
 );
 
 const OpenRoomListComponent = ({
     openroomList,
-    doubleClick,
+    openRoomdoubleClick,
 }: OpenRoomComponentProps) => (
     <ChatArea className="chat">
         {openroomList.map(openroom => (
-            <OpenRoomList
+            <OpenRoomItemWrapper
                 key={openroom._id}
                 id={openroom._id}
-                doubleClick={doubleClick}
+                openRoomdoubleClick={openRoomdoubleClick}
                 title={openroom.title}
-            ></OpenRoomList>
+            ></OpenRoomItemWrapper>
         ))}
     </ChatArea>
 );
@@ -145,7 +176,8 @@ const OpenRoomListComponent = ({
 const RoomComponent = ({
     roomList,
     openroomList,
-    doubleClick,
+    openRoomdoubleClick,
+    myRoomdoubleClick,
 }: RoomComponentProps & OpenRoomComponentProps) => {
     return (
         <RoomComponentBlock>
@@ -165,7 +197,12 @@ const RoomComponent = ({
                 <Route
                     exact
                     path="/chat/myroom"
-                    render={() => <MyRoomListComponent roomList={roomList} />}
+                    render={() => (
+                        <MyRoomListComponent
+                            roomList={roomList}
+                            myRoomdoubleClick={myRoomdoubleClick}
+                        />
+                    )}
                 />
                 <Route
                     exact
@@ -173,7 +210,7 @@ const RoomComponent = ({
                     render={() => (
                         <OpenRoomListComponent
                             openroomList={openroomList}
-                            doubleClick={doubleClick}
+                            openRoomdoubleClick={openRoomdoubleClick}
                         />
                     )}
                 />

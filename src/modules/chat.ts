@@ -1,8 +1,12 @@
 import { Observable } from 'rxjs';
 import { ofType } from 'redux-observable';
-import { switchMap, mergeMap, map } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { User } from './login';
-import { joinRoomAndGetChatList, addChat } from '../lib/api/chatapi';
+import {
+    joinRoomAndGetChatList,
+    addChat,
+    joinMyRoomAndGetChatList,
+} from '../lib/api/chatapi';
 
 //--declare type
 
@@ -10,7 +14,7 @@ export interface Chat {
     room: string;
     nickname: string;
     content: string;
-    checkedUserList: String[];
+    checkedUserList: string[];
     createdAt: Date;
 }
 export interface Member {
@@ -19,19 +23,31 @@ export interface Member {
 }
 
 export interface Room {
-    id: number;
-    memberList: Member[];
-    Lastmessage: {
+    _id: string;
+    title: string;
+    owner: string;
+    joinedusers: NicknameUser[];
+    createdAt: string;
+    _v: number;
+    /* lastmessage: {
         createdtime: Date;
         content: string;
-    };
-    createdUser: User;
+    }; */
 }
+
+export interface NicknameUser {
+    _id: string;
+    nickname: string;
+    userid: string;
+}
+
+type roomname = 'openroom' | 'myroom';
 
 export interface CurrentRoom {
     id: string | null;
     isopen: boolean;
     nickname: string;
+    fromwhichroom: roomname;
 }
 
 //--end declare type
@@ -44,11 +60,11 @@ const SET_CHAT = 'chat/SET_CHAT' as const;
 const MAKE_CHAT = 'chat/MAKE_CHAT' as const;
 const UPDATE_CHAT = 'chat/UPDATE_CHAT' as const;
 const JOIN_CHATROOM = 'chat/JOIN_CHATROOM' as const;
+const JOIN_MYCHATROOM = 'chat/JOIN_MYCHATROOM' as const;
+//const JOIN_CHATMYROOM = 'chat/JOIN_CHATMYROOM' as const;
 
 const FETCH_ROOM = 'chat/FETCH_ROOM' as const;
 const SET_ROOM = 'chat/SET_ROOM' as const;
-const MAKE_ROOM = 'chat/MAKE_ROOM' as const;
-const UPDATE_ROOM = 'chat/UPDATE_ROOM' as const;
 const SET_CURRENTROOM = 'chat/SET_CURRENTROOM' as const;
 
 //-------end types-----------------
@@ -89,15 +105,32 @@ export const update_chat = (
 export const join_chatroom = (
     roomid: string,
     userid: string,
-    nickname: string
+    fromwhichroom: roomname,
+    nickname?: string
 ) => ({
     type: JOIN_CHATROOM,
     payload: {
         roomid,
         userid,
+        fromwhichroom,
         nickname,
     },
 });
+export const join_mychatroom = (
+    roomid: string,
+    userid: string,
+    fromwhichroom: roomname,
+    nickname?: string
+) => ({
+    type: JOIN_MYCHATROOM,
+    payload: {
+        roomid,
+        userid,
+        fromwhichroom,
+        nickname,
+    },
+});
+
 export const fetch_room = () => ({
     type: FETCH_ROOM,
 });
@@ -126,22 +159,35 @@ type room_actions = ReturnType<
     | typeof set_currentroom
     | typeof initialize_chat
 >;
-
-export const joinChatRoomEpic = (action$: Observable<any>) =>
+const joinChatRoomEpicMaker = (
+    type: string,
+    apifn: (payload: any) => Observable<any>
+) => (action$: Observable<any>) =>
     action$.pipe(
-        ofType(JOIN_CHATROOM),
+        ofType(type),
         switchMap(action =>
-            joinRoomAndGetChatList(action.payload).pipe(
+            apifn(action.payload).pipe(
                 map(({ data }: any) => {
                     const newData = Object.assign(data, {
                         roomid: action.payload.roomid,
+                        fromwhichroom: action.payload.fromwhichroom,
                     });
-                    console.log('newdata', newData);
                     return set_chat(newData);
                 })
             )
         )
     );
+
+export const joinChatRoomEpic = joinChatRoomEpicMaker(
+    JOIN_CHATROOM,
+    joinRoomAndGetChatList
+);
+
+export const joinChatMyRoomEpic = joinChatRoomEpicMaker(
+    JOIN_MYCHATROOM,
+    joinMyRoomAndGetChatList
+);
+
 export const addChatEpic = (action$: Observable<any>) =>
     action$.pipe(
         ofType(UPDATE_CHAT),
@@ -156,7 +202,7 @@ export const addChatEpic = (action$: Observable<any>) =>
 export type ChatInitialStateType = {
     chatList: Chat[];
     userList: User[];
-    myroomList: any[];
+    myroomList: Room[];
     currentOpenRoom: CurrentRoom;
 };
 
@@ -168,6 +214,7 @@ const initialstate: ChatInitialStateType = {
         id: null,
         isopen: false,
         nickname: '',
+        fromwhichroom: 'openroom',
     },
 };
 
@@ -185,6 +232,7 @@ function chatReducer(
                 id: action.payload.roomid,
                 isopen: true,
                 nickname: action.payload.nickname,
+                fromwhichroom: action.payload.fromwhichroom,
             };
             return {
                 ...state,

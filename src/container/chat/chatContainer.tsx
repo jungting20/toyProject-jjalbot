@@ -14,6 +14,8 @@ import {
     fetch_openroom,
     make_openroom,
     OpenRoom,
+    set_openroom,
+    remove_openroom,
 } from '../../modules/openroom';
 
 import {
@@ -23,21 +25,29 @@ import {
     update_chat,
 } from '../../modules/chat';
 
-import { join_chatroom } from '../../modules/chat';
+import { join_chatroom, join_mychatroom } from '../../modules/chat';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { set_rooms, fetch_checklogin } from '../../modules/login';
+import useUpdateEffect from '../../lib/customhook';
 
-const ChatContainer = () => {
-    const { room, openroom, modal, auth, chat } = useSelector(
+const ChatContainer = ({ history }: RouteComponentProps) => {
+    const { openroom, modal, auth, chat } = useSelector(
         (state: RootState) => state
     );
 
     const { nickname, confirm, visible, roomid } = modal;
 
-    const { myroomList, currentOpenRoom, chatList } = chat;
+    const { currentOpenRoom, chatList } = chat;
 
     const dispatch = useDispatch();
     const openroomdoubleClick = (id: string) => {
         dispatch(show_modal(id));
     };
+
+    const myRoomdoubleClick = (id: string) => {
+        dispatch(join_mychatroom(id, auth.auth!._id, 'myroom'));
+    };
+
     const changeNickNameInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(set_nickname(e.currentTarget.value));
     };
@@ -53,24 +63,25 @@ const ChatContainer = () => {
         e.currentTarget.value = '';
         dispatch(update_chat(roomid, auth.auth!._id, value, nickname));
     };
-    useEffect(() => {
+
+    useUpdateEffect(() => {
         if (!confirm) {
             return;
         }
-
-        if (!auth.auth) {
-            return;
-        }
-        dispatch(join_chatroom(roomid, auth.auth!._id, nickname));
+        dispatch(join_chatroom(roomid, auth.auth!._id, 'openroom', nickname));
     }, [confirm]);
 
-    useEffect(() => {
+    useUpdateEffect(() => {
         const socket = socketio.connect(
-            `http://localhost:4000/chat?roomid=${roomid}`
+            `http://localhost:4000/chat?roomid=${currentOpenRoom.id}`
         );
         if (!currentOpenRoom.isopen) {
             socket.close();
             return;
+        }
+
+        if (currentOpenRoom.fromwhichroom === 'openroom') {
+            dispatch(remove_openroom(roomid));
         }
 
         socket.on('newChat', (chat: Chat) => {
@@ -84,6 +95,16 @@ const ChatContainer = () => {
     }, [currentOpenRoom]);
 
     useEffect(() => {
+        /* if (!(auth.auth || auth.tokencheck)) {
+            dispatch(fetch_checklogin());
+            return;
+        } */
+
+        if (!auth.auth) {
+            history.push('/login');
+            return;
+        }
+
         const socket = socketio.connect('http://localhost:4000/room');
 
         dispatch(fetch_openroom());
@@ -101,7 +122,7 @@ const ChatContainer = () => {
         return () => {
             dispatch(initialize_chat());
         };
-    }, []);
+    }, [auth]);
 
     return (
         <>
@@ -113,15 +134,15 @@ const ChatContainer = () => {
                 cancelsubmit={cancelNickNameInput}
             />
             <TotalChatComponent
-                roomList={myroomList}
+                roomList={auth.myroomList}
                 openroomList={openroom.openroomList}
                 openroomdoublClick={openroomdoubleClick}
                 currentRoom={currentOpenRoom}
                 chatList={chatList}
                 enterEvent={enterEvent}
+                myRoomdoubleClick={myRoomdoubleClick}
             />
         </>
     );
 };
-
-export default ChatContainer;
+export default withRouter(ChatContainer);

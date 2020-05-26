@@ -1,8 +1,7 @@
 import { Observable } from 'rxjs';
-import { ofType } from 'redux-observable';
-import { switchMap, mergeMap, map } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { fetchOpenRoomList } from '../lib/api/roomapi';
-
+import { ofType } from 'redux-observable';
 //--declare type
 
 export interface OpenRoom {
@@ -22,6 +21,7 @@ const FETCH_OPENROOM = 'openroom/FETCH_ROOM' as const;
 const SET_OPENROOM = 'openroom/SET_ROOM' as const;
 const MAKE_OPENROOM = 'openroom/MAKE_ROOM' as const;
 const UPDATE_OPENROOM = 'openroom/UPDATE_ROOM' as const;
+const REMOVE_OPENROOM = 'openroom/REMOVE_ROOM' as const;
 
 //-------end types-----------------
 
@@ -44,7 +44,10 @@ export const update_openroom = (room: OpenRoom) => ({
     type: UPDATE_OPENROOM,
     payload: room,
 });
-
+export const remove_openroom = (roomid: string) => ({
+    type: REMOVE_OPENROOM,
+    payload: roomid,
+});
 //--end actions---
 
 //--action type
@@ -53,6 +56,7 @@ type openroom_actions = ReturnType<
     | typeof set_openroom
     | typeof make_openroom
     | typeof update_openroom
+    | typeof remove_openroom
 >;
 
 export const openRoomListFetchEpic = (action$: Observable<any>) =>
@@ -92,6 +96,12 @@ function openroomReducer(
             };
         case UPDATE_OPENROOM: {
             return state;
+        }
+        case REMOVE_OPENROOM: {
+            const newOpenRoomList = state.openroomList.filter(
+                room => room._id != action.payload
+            );
+            return { ...state, openroomList: newOpenRoomList };
         }
         default:
             return state;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
 import { Chat, CurrentRoom } from '../../modules/chat';
@@ -30,6 +30,7 @@ const ChatTopBlock = styled.div`
 const ChatContentBlock = styled.div`
     background: #bed0dc;
     flex: 8;
+    overflow: auto;
 `;
 
 const ChatInputBoxBlock = styled.div`
@@ -66,6 +67,14 @@ const ChatComponent = ({ chatList, currentRoom, enterEvent }: ChatProps) => {
             }
         }
     };
+    const messageRef = useRef<HTMLDivElement>(null);
+    const scrollToBottom = () => {
+        if (messageRef && messageRef.current) {
+            console.log('이거 실행좀');
+            messageRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+    useEffect(scrollToBottom, [chatList]);
 
     return (
         <ChatComponentBlock isopen={currentRoom.isopen}>
@@ -81,6 +90,7 @@ const ChatComponent = ({ chatList, currentRoom, enterEvent }: ChatProps) => {
                         </ChatContent>
                     );
                 })}
+                <div ref={messageRef} />
             </ChatContentBlock>
             <ChatInputBoxBlock>
                 <input onKeyPress={KeyPress}></input>

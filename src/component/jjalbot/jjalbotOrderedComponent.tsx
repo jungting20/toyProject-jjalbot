@@ -1,6 +1,6 @@
 import React from 'react';
 import { from } from 'rxjs';
-import { concatMap, scan, take } from 'rxjs/operators';
+import { concatMap, scan } from 'rxjs/operators';
 import styled from 'styled-components';
 import { useObservable } from '../../lib/customhook';
 import { Jalbottype } from '../../modules/jjalbot';
@@ -32,7 +32,6 @@ const JjalbotOrderedComponent = ({ imglist }: JjalBotComponentProps) => {
                         );
                     };
                     const onerror = () => {
-                        console.log(`${i}번 이미지 로딩 실패`);
                         resolve(<ErrorComponent size="10x" key={imgobj._id} />);
                     };
                     img.onload = onload;

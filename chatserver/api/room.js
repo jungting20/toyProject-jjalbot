@@ -27,9 +27,9 @@ router.post('/Room', checklogin, async (req, res) => {
 });
 
 router.get('/openRoomList', async (req, res) => {
-    console.log('openrRoomList');
-    const roomList = await Room.find().limit(10);
-
+    const roomList = await Room.find()
+        .nin('_id', res.user.rooms)
+        .limit(20);
     return res.status(200).json({ code: 200, message: '성공', data: roomList });
 });
 
@@ -38,21 +38,37 @@ router.post(
     /* checklogin */ async (req, res) => {
         const { roomid, userid, nickname } = req.body;
         const room = await Room.findById(roomid);
+        const issuccess = await room.joinUser(nickname, userid);
+        if (!issuccess) {
+            return res.status(401).json({
+                code: 401,
+                message: '중복된 닉네임!',
+            });
+        }
         const nicknameschema = new Nickname({
-            room: roomid,
-            user: userid,
+            roomid: roomid,
+            userid: userid,
             nickname: nickname,
         });
         await nicknameschema.save();
-        await room.joinUser(userid);
+
         const chatList = await Chat.find()
             .where('room')
             .equals(roomid);
 
-        const me = await User.findById(userid);
+        const me = await User.findById(userid).populate('rooms');
+        await me.addRoom(roomid);
+        /* const myroomListIds = me.rooms;
+        const myroomList = await Room.find()
+            .where('_id')
+            .in(myroomListIds); */
 
-        const myroomList = await me.addRoom(roomid);
+        const myroomList = me.rooms;
+        //.populate('rooms', 'title joinedusers');
 
+        //        const myroomListreal = await me.populate('rooms', 'title joinedusers');
+        //        const myroomList = me.rooms;
+        //        console.log(myroomList);
         //const users = await User.find();
         //console.log(users);
         //await room.joinUser(userid);
@@ -74,4 +90,26 @@ router.post(
     }
 );
 
+router.post('/joinMyRoom', async (req, res) => {
+    const { roomid, userid } = req.body;
+    const nickname = await Nickname.find()
+        .where('roomid')
+        .equals(roomid)
+        .where('userid')
+        .equals(userid);
+
+    const chatList = await Chat.find()
+        .where('room')
+        .equals(roomid);
+
+    const me = await User.findById(userid).populate('rooms');
+
+    const myroomList = me.rooms;
+
+    return res.status(200).json({
+        code: 200,
+        message: '성공',
+        data: { chatList, myroomList, nickname },
+    });
+});
 module.exports = router;

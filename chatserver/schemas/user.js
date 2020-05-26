@@ -43,6 +43,7 @@ userSchema.methods.generateToken = function() {
         {
             _id: this.id,
             email: this.email,
+            rooms: this.rooms,
         },
         process.env.JWT_SECRET,
         {
@@ -52,12 +53,16 @@ userSchema.methods.generateToken = function() {
     return token;
 };
 userSchema.methods.addRoom = function(roomid) {
-    this.rooms.push(roomid);
-    return this.rooms;
+    if (!this.rooms.includes(roomid)) {
+        this.rooms.push(roomid);
+        this.save();
+        return this;
+    }
+    return this;
 };
 
 userSchema.statics.findbyUsername = function(email) {
-    return this.findOne({ email });
+    return this.findOne({ email }).populate('rooms');
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { ofType } from 'redux-observable';
-import { switchMap, mergeMap, map } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 import { fetchImgList } from '../lib/api/jjalbotapi';
 
 //--declare type

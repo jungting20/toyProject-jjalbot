@@ -3,7 +3,6 @@ const User = require('../schemas/user');
 
 const jwtMiddleware = async function(req, res, next) {
     const token = req.cookies['access_token'];
-    console.log('미들웨어', token);
     if (!token) {
         next();
         return;
@@ -13,6 +12,7 @@ const jwtMiddleware = async function(req, res, next) {
         res.user = {
             _id: decoded._id,
             email: decoded.email,
+            rooms: decoded.rooms,
         };
         const now = Math.floor(Date.now() / 1000);
 
@@ -25,7 +25,6 @@ const jwtMiddleware = async function(req, res, next) {
             });
         }
 
-        //console.log('user', res.user);
         next();
         return;
     } catch (e) {

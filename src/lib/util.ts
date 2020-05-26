@@ -1,4 +1,3 @@
-import { Action } from 'redux';
 import { Observable } from 'rxjs';
 
 export const onlyone = (fn: Function) => {

@@ -15,24 +15,43 @@ const roomSchema = new Schema({
         type: String,
         required: true,
     },
-    users: [
+    joinedusers: [
         {
-            type: ObjectId,
-            ref: 'User',
+            nickname: {
+                type: String,
+            },
+            userid: {
+                type: String,
+            },
         },
     ],
+    lastMessage: {
+        content: {
+            type: String,
+        },
+        createdtime: {
+            type: Date,
+            default: Date.now,
+        },
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
 });
-roomSchema.methods.joinUser = function(userid) {
-    if (!this.users.includes(userid)) {
-        this.users.push(userid);
-        return this.save();
+roomSchema.methods.joinUser = function(nickname, userid) {
+    const findIndexNumber = this.joinedusers.findIndex(obj => {
+        return obj.nickname === nickname || obj.userid === userid;
+    });
+    if (findIndexNumber === -1) {
+        this.joinedusers.push({
+            nickname,
+            userid,
+        });
+        this.save();
+        return true;
     }
-    console.log('이미포함');
-    return this;
+    return false;
 };
 
 module.exports = mongoose.model('Room', roomSchema);

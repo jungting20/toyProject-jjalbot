@@ -80,13 +80,22 @@ router.post('/login', async (req, res) => {
             maxAge: 1000 * 60 * 60 * 24 * 7,
             httpOnly: true,
         });
-        console.log(userdata);
         res.status(200).json({ code: 200, message: '성공', data: userdata });
     } catch (e) {
         console.log(e);
         res.status(500).json({ code: 500, message: '에러' });
     }
 });
+
+router.post('/checklogin', async (req, res) => {
+    if (res.user) {
+        return res
+            .status(200)
+            .json({ code: 200, message: '성공', data: res.user });
+    }
+    return res.status(500).json({ code: 500, message: '에러' });
+});
+
 /* const check = async ctx => {
     const { user } = ctx.state;
     if (!user) {
@@ -95,9 +104,9 @@ router.post('/login', async (req, res) => {
     }
     ctx.body = user;
 }; */
-const logout = async (req, res) => {
+router.post('/logout', async (req, res) => {
     res.cookie('access_token');
     res.status(204).json({ code: 204, message: '로그아웃 성공' });
-};
+});
 
 module.exports = router;

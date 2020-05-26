@@ -1,38 +1,35 @@
 import axios from 'axios';
 import { from, of, Observable } from 'rxjs';
-import { pluck, catchError, tap, map } from 'rxjs/operators';
-import { Jalbottype } from '../../modules/jjalbot';
-import { Chat } from '../../modules/chat';
+import { pluck, catchError } from 'rxjs/operators';
 const instance = axios.create({
     baseURL: 'http://localhost:4000',
+    withCredentials: true,
 });
 
-export const fetchRoomList = (): Observable<any[]> => {
-    return from(instance.get('/room/roomList')).pipe(
-        pluck('data'),
-        tap(a => console.log(a)),
-        catchError(error => of([]))
-    );
-};
-
-export const joinRoomAndGetChatList = ({
+const joinRoomMaker = (url: string) => ({
     userid,
     roomid,
     nickname,
 }: any): Observable<any[]> => {
     return from(
-        instance.post('/room/joinUser', {
+        instance.post(url, {
             userid,
             roomid,
             nickname,
         })
-    ).pipe(
+    ).pipe(pluck('data'));
+};
+
+export const fetchRoomList = (): Observable<any[]> => {
+    return from(instance.get('/room/roomList')).pipe(
         pluck('data'),
-        tap(a => console.log('나오긴할까', a))
+        catchError(error => of([]))
     );
 };
 
+export const joinRoomAndGetChatList = joinRoomMaker('/room/joinUser');
+export const joinMyRoomAndGetChatList = joinRoomMaker('/room/joinMyRoom');
+
 export const addChat = (chatobj: any): Observable<any[]> => {
-    console.log('ㅁddChat');
     return from(instance.post('/chat/addchat', chatobj)).pipe(pluck('data'));
 };

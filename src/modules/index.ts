@@ -1,10 +1,18 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
 import jjalbotReducer, { jjalbotFetchEpic } from './jjalbot';
-import roomReducer from './myroom';
-import chatReducer, { joinChatRoomEpic, addChatEpic } from './chat';
+//import roomReducer from './myroom';
+import chatReducer, {
+    joinChatRoomEpic,
+    addChatEpic,
+    joinChatMyRoomEpic,
+} from './chat';
 import openroomReducer, { openRoomListFetchEpic } from './openroom';
-import loginReducer, { loginFetchEpic } from './login';
+import loginReducer, {
+    loginFetchEpic,
+    checkloginFetchEpic,
+    logoutFetchEpic,
+} from './login';
 import modalReducer from './inputmodal';
 
 export const rootEpic = combineEpics(
@@ -12,12 +20,15 @@ export const rootEpic = combineEpics(
     openRoomListFetchEpic,
     loginFetchEpic,
     joinChatRoomEpic,
-    addChatEpic
+    addChatEpic,
+    checkloginFetchEpic,
+    logoutFetchEpic,
+    joinChatMyRoomEpic
 );
 
 const rootReducer = combineReducers({
     jjalbot: jjalbotReducer,
-    room: roomReducer,
+    //    room: roomReducer,
     openroom: openroomReducer,
     chat: chatReducer,
     auth: loginReducer,

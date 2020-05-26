@@ -3,7 +3,7 @@ import styled from 'styled-components';
 //import ChatComponent from './chatComponent';
 import RoomComponent from './roomComponent';
 import ChatComponent from './chatComponent';
-import { Room } from '../../modules/myroom';
+import { Room } from '../../modules/chat';
 import { OpenRoom } from '../../modules/openroom';
 import { Chat, CurrentRoom } from '../../modules/chat';
 
@@ -14,6 +14,7 @@ interface TotalChatComponentProps {
     openroomdoublClick: (id: string) => void;
     currentRoom: CurrentRoom;
     enterEvent: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    myRoomdoubleClick: (id: string) => void;
 }
 
 const TotalChatComponentBlock = styled.div`
@@ -30,12 +31,14 @@ const TotalChatComponent = ({
     openroomdoublClick,
     currentRoom,
     enterEvent,
+    myRoomdoubleClick,
 }: TotalChatComponentProps) => (
     <TotalChatComponentBlock>
         <RoomComponent
             roomList={roomList}
             openroomList={openroomList}
-            doubleClick={openroomdoublClick}
+            openRoomdoubleClick={openroomdoublClick}
+            myRoomdoubleClick={myRoomdoubleClick}
         />
         <ChatComponent
             chatList={chatList!}

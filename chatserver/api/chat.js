@@ -18,7 +18,11 @@ router.post('/addchat', async (req, res) => {
         checkedUserList: joinedRoom.users,
     });
     await chat.save();
-
+    await Room.findByIdAndUpdate(roomid, {
+        lastMessage: {
+            content: content,
+        },
+    });
     io.to(roomid).emit('newChat', chat);
 
     return res.status(200).json({ code: 200, data: '성공' });
