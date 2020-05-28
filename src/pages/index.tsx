@@ -11,7 +11,7 @@ const RootRouterBlock = styled.div`
 function Router() {
     return (
         <Switch>
-            <Route path="/jjalbot" component={jjalBotPage} />
+            <Route path="/" component={jjalBotPage} />
             <Route path="/jjalbotordered" component={jjalBOtorderedPage} />
             {/* <Route path="/chat" component={ChatPage} />
             <Route path="/login" component={LoginPage} /> */}
